@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2023.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -94,10 +97,6 @@
     <Compile Include="RandomSubclassService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Example.Common\Example.Common.csproj">
-      <Project>{4378d5ec-8ac1-4cb7-aec9-561e122dfff6}</Project>
-      <Name>Example.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Example.Model\Example.Model.csproj">
       <Project>{4e2bce39-4b7e-4180-9c90-28b792f147b0}</Project>
       <Name>Example.Model</Name>

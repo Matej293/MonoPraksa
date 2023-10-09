@@ -1,30 +1,18 @@
-﻿using Example.WebApi.Models;
-using Example.Repository;
-using Microsoft.Ajax.Utilities;
-using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics.Metrics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Remoting.Messaging;
-using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web.Http;
-using System.Xml.Linq;
 using Example.Service;
-using Example.Service.Common;
-using System.Net.NetworkInformation;
 using Example.Model;
-using Example.Model.Common;
 
 namespace Example.WebApi.Controllers
 {
     public class CityController : ApiController
     {
-        private CityService service;
+        private readonly CityService service;
+
         public CityController()
         {
             service = new CityService();
@@ -40,7 +28,7 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, cities);
         }
 
-        public async Task<HttpResponseMessage> GetById(int id)
+        public async Task<HttpResponseMessage> GetById(Guid id)
         {
             CityModel city = await service.GetById(id);
             if (city == null)
@@ -56,11 +44,15 @@ namespace Example.WebApi.Controllers
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
+
+            await service.Init(); // initializing the tables with create if not exists
+
             await service.PostCity(city);
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> PutCity(int id, CityModel city)
+        public async Task<HttpResponseMessage> PutCity(Guid id, CityModel city)
         {
             if (city == null)
             {
@@ -70,7 +62,7 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> DeleteCity(int id)
+        public async Task<HttpResponseMessage> DeleteCity(Guid id)
         {
             if (service.GetById(id).Id == 0)
             {

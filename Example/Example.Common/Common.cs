@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
+using System.Configuration;
 using Example.Model;
 using Example.Model.Common;
-using Npgsql;
+
 
 namespace Example.Common
 {
-    public class CommonClass
+    public class Common 
     {
     }
 }

@@ -1,12 +1,9 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
-using System.Net.Http;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using Npgsql;
+using NpgsqlTypes;
 using Example.Model;
 
 namespace Example.Repository
@@ -15,7 +12,7 @@ namespace Example.Repository
     {
         private readonly string CONNECTION_STRING = ConfigurationManager.ConnectionStrings["CONNECTION_STRING"].ConnectionString;
 
-        private NpgsqlConnection connection;
+        private readonly NpgsqlConnection connection;
 
         private const string TABLE_NAME = "City";
         private const string TABLE_NAME_2 = "RandomSubclass";
@@ -23,6 +20,39 @@ namespace Example.Repository
         public RandomSubclassRepository()
         {
             connection = new NpgsqlConnection(CONNECTION_STRING);
+        }
+
+        public async Task InitializeDB()
+        {
+            using (var connection = new NpgsqlConnection(CONNECTION_STRING))
+            {
+                connection.Open();
+
+                using (var cmd = new NpgsqlCommand(CONNECTION_STRING, connection))
+                {
+                    cmd.CommandText = $"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
+                    await cmd.ExecuteNonQueryAsync();
+
+
+                    cmd.CommandText = $"CREATE TABLE IF NOT EXISTS \"{TABLE_NAME_2}\" (" +
+                                      $"\"Id\" UUID DEFAULT uuid_generate_v4() PRIMARY KEY, " +
+                                      $"\"RandomArg1\" VARCHAR NOT NULL, " +
+                                      $"\"RandomArg2\" INTEGER NOT NULL" +
+                                      $")";
+                    await cmd.ExecuteNonQueryAsync();
+
+
+                    cmd.CommandText = $"CREATE TABLE IF NOT EXISTS \"{TABLE_NAME}\" (" +
+                                      $"\"Id\" UUID DEFAULT uuid_generate_v4() PRIMARY KEY, " +
+                                      $"\"Name\" VARCHAR NOT NULL, " +
+                                      $"\"Country\" VARCHAR NOT NULL, " +
+                                      $"\"Population\" INTEGER NOT NULL, " +
+                                      $"\"RandomSubclassId\" UUID," +
+                                      $"FOREIGN KEY (\"RandomSubclassId\") REFERENCES \"{TABLE_NAME_2}\"(\"Id\")" +
+                                      $")";
+                    await cmd.ExecuteNonQueryAsync();
+                }
+            }
         }
 
         public async Task<List<RandomSubclassModel>> GetAll()
@@ -53,7 +83,7 @@ namespace Example.Repository
         //helper function
         public RandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false)
         {
-            int id = reader.GetInt32(reader.GetOrdinal("Id"));
+            Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
             string arg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
             int arg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
 
@@ -69,31 +99,28 @@ namespace Example.Repository
             return rand;
         }
 
-        public async Task<RandomSubclassModel> GetById(int id)
+        public async Task<RandomSubclassModel> GetById(Guid id)
         {
-            List<RandomSubclassModel> list = new List<RandomSubclassModel>();
-
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
                 connection.Open();
-                var cmd = new NpgsqlCommand($"SELECT * FROM \"{TABLE_NAME_2}\" WHERE \"Id\" = @Id", connection);
 
-                using (cmd)
+                var commandText = $"SELECT * FROM \"{TABLE_NAME_2}\" WHERE \"Id\" = @Id";
+
+                using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
                     cmd.Parameters.AddWithValue("@Id", id);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        if (await reader.ReadAsync())
                         {
-                            RandomSubclassModel RandomSubclass = ReadFunc(reader);
-                            list.Add(RandomSubclass);
+                            return ReadFunc(reader);
                         }
                     }
                 }
             }
-            connection.Close();
-            return list[0];
+            return null;
         }
 
 
@@ -107,20 +134,24 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.AddWithValue("@Id", RandomSubclass.Id);
+                    cmd.Parameters.Add(new NpgsqlParameter
+                    {
+                        ParameterName = "@Id",
+                        NpgsqlDbType = NpgsqlDbType.Uuid,
+                        Value = RandomSubclass.Id
+                    });
+
                     cmd.Parameters.AddWithValue("@RandomArg1", RandomSubclass.RandomArg1);
                     cmd.Parameters.AddWithValue("@RandomArg2", RandomSubclass.RandomArg2);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
 
-                connection.Close();
-
                 return RandomSubclass;
             }
         }
 
-        public async Task PutRandomSubclass(int id, RandomSubclassModel RandomSubclass)
+        public async Task PutRandomSubclass(Guid id, RandomSubclassModel RandomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -131,17 +162,21 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.AddWithValue("@Id", RandomSubclass.Id);
+                    cmd.Parameters.Add(new NpgsqlParameter
+                    {
+                        ParameterName = "@Id",
+                        NpgsqlDbType = NpgsqlDbType.Uuid,
+                        Value = RandomSubclass.Id
+                    });
                     cmd.Parameters.AddWithValue("@RandomArg1", RandomSubclass.RandomArg1);
                     cmd.Parameters.AddWithValue("@RandomArg2", RandomSubclass.RandomArg2);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
-                connection.Close();
             }
         }
 
-        public async Task DeleteRandomSubclass(int id)
+        public async Task DeleteRandomSubclass(Guid id)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -151,10 +186,15 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.AddWithValue("@id", id);
+                    cmd.Parameters.Add(new NpgsqlParameter
+                    {
+                        ParameterName = "@Id",
+                        NpgsqlDbType = NpgsqlDbType.Uuid,
+                        Value = id
+                    });
+
                     await cmd.ExecuteNonQueryAsync();
                 }
-                connection.Close();
             }
         }
     }

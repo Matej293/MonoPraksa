@@ -2,8 +2,6 @@
 using Example.Repository;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Example.Service
@@ -17,13 +15,18 @@ namespace Example.Service
 
         private RandomSubclassRepository repository;
 
+        public async Task Init()
+        {
+            await repository.InitializeDB();
+        }
+
         public async Task<List<RandomSubclassModel>> GetAll()
         {
             List<RandomSubclassModel> list = await repository.GetAll();
             return list;
         }
 
-        public async Task<RandomSubclassModel> GetById(int id)
+        public async Task<RandomSubclassModel> GetById(Guid id)
         {
             RandomSubclassModel list = await repository.GetById(id);
             return list;
@@ -34,12 +37,12 @@ namespace Example.Service
             await repository.PostRandomSubclass(RandomSubclass);
         }
 
-        public async Task PutRandomSubclass(int id, RandomSubclassModel RandomSubclass)
+        public async Task PutRandomSubclass(Guid id, RandomSubclassModel RandomSubclass)
         {
             await repository.PutRandomSubclass(id, RandomSubclass);
         }
 
-        public async Task DeleteRandomSubclass(int id)
+        public async Task DeleteRandomSubclass(Guid id)
         {
             await repository.DeleteRandomSubclass(id);
         }

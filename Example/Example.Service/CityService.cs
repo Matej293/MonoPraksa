@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Example.Repository.Common;
 using Example.Service.Common;
 using Example.Repository;
 using Example.Model;
-using System.Net.NetworkInformation;
 
 namespace Example.Service
 {
@@ -16,10 +12,14 @@ namespace Example.Service
         public CityService() 
         {
             repository = new CityRepository();
-            //repository.InitializeDB();
         }
 
-        private CityRepository repository;
+        private readonly CityRepository repository;
+
+        public async Task Init()
+        {
+            await repository.InitializeDB();
+        }
 
         public async Task<List<CityModel>> GetAll()
         {
@@ -27,7 +27,7 @@ namespace Example.Service
             return cities;
         }
 
-        public async Task<CityModel> GetById(int id)
+        public async Task<CityModel> GetById(Guid id)
         {
             CityModel cities = await repository.GetById(id);
             return cities;
@@ -38,12 +38,12 @@ namespace Example.Service
             await repository.PostCity(city);
         }
 
-        public async Task PutCity(int id, CityModel city)
+        public async Task PutCity(Guid id, CityModel city)
         {
             await repository.PutCity(id, city);
         }
 
-        public async Task DeleteCity(int id)
+        public async Task DeleteCity(Guid id)
         {
             await repository.DeleteCity(id);
         }
