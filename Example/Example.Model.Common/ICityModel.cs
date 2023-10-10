@@ -13,7 +13,7 @@ namespace Example.Model.Common
         string Name { get; set; }
         string Country { get; set; }
         int Population { get; set; }
-        int RandomSubclassId { get; set; }
-        RandomSubclassModel RandomSubclassModel { get; set; }
+        Guid RandomSubclassId { get; set; }
+        IRandomSubclassModel RandomSubclass { get; set; }
     }
 }

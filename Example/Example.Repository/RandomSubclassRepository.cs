@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Npgsql;
 using NpgsqlTypes;
 using Example.Model;
+using Example.Model.Common;
+using Example.Repository.Common;
 
 namespace Example.Repository
 {
-    public class RandomSubclassRepository
+    public class RandomSubclassRepository : IRandomSubclassRepository
     {
         private readonly string CONNECTION_STRING = ConfigurationManager.ConnectionStrings["CONNECTION_STRING"].ConnectionString;
 
@@ -55,9 +57,10 @@ namespace Example.Repository
             }
         }
 
-        public async Task<List<RandomSubclassModel>> GetAll()
+        public async Task<List<IRandomSubclassModel>> GetAll()
         {
-            List<RandomSubclassModel> list = new List<RandomSubclassModel>();
+            List<IRandomSubclassModel> list = new List<IRandomSubclassModel>();
+
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
                 connection.Open();
@@ -70,8 +73,8 @@ namespace Example.Repository
                     {
                         while (reader.Read())
                         {
-                            RandomSubclassModel RandomSubclass = ReadFunc(reader);
-                            list.Add(RandomSubclass);
+                            IRandomSubclassModel randomSubclass = ReadFunc(reader);
+                            list.Add(randomSubclass);
                         }
                     }
                 }
@@ -81,15 +84,13 @@ namespace Example.Repository
         }
 
         //helper function
-        public RandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false)
+        public IRandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false)
         {
             Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
             string arg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
             int arg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
 
-            RandomSubclassModel rand = new RandomSubclassModel();
-
-            rand = new RandomSubclassModel
+            IRandomSubclassModel rand = new RandomSubclassModel
             {
                 Id = id,
                 RandomArg1 = arg1,
@@ -99,7 +100,7 @@ namespace Example.Repository
             return rand;
         }
 
-        public async Task<RandomSubclassModel> GetById(Guid id)
+        public async Task<IRandomSubclassModel> GetById(Guid id)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -124,7 +125,8 @@ namespace Example.Repository
         }
 
 
-        public async Task<RandomSubclassModel> PostRandomSubclass(RandomSubclassModel RandomSubclass)
+
+        public async Task<IRandomSubclassModel> PostRandomSubclass(IRandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -138,20 +140,20 @@ namespace Example.Repository
                     {
                         ParameterName = "@Id",
                         NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = RandomSubclass.Id
+                        Value = randomSubclass.Id
                     });
 
-                    cmd.Parameters.AddWithValue("@RandomArg1", RandomSubclass.RandomArg1);
-                    cmd.Parameters.AddWithValue("@RandomArg2", RandomSubclass.RandomArg2);
+                    cmd.Parameters.AddWithValue("@RandomArg1", randomSubclass.RandomArg1);
+                    cmd.Parameters.AddWithValue("@RandomArg2", randomSubclass.RandomArg2);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
-
-                return RandomSubclass;
+                
+                return randomSubclass;
             }
         }
 
-        public async Task PutRandomSubclass(Guid id, RandomSubclassModel RandomSubclass)
+        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -166,10 +168,10 @@ namespace Example.Repository
                     {
                         ParameterName = "@Id",
                         NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = RandomSubclass.Id
+                        Value = randomSubclass.Id
                     });
-                    cmd.Parameters.AddWithValue("@RandomArg1", RandomSubclass.RandomArg1);
-                    cmd.Parameters.AddWithValue("@RandomArg2", RandomSubclass.RandomArg2);
+                    cmd.Parameters.AddWithValue("@RandomArg1", randomSubclass.RandomArg1);
+                    cmd.Parameters.AddWithValue("@RandomArg2", randomSubclass.RandomArg2);
 
                     await cmd.ExecuteNonQueryAsync();
                 }

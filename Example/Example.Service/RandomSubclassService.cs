@@ -1,50 +1,53 @@
-﻿using Example.Model;
-using Example.Repository;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Example.Model;
+using Example.Model.Common;
+using Example.Repository.Common;
+using Example.Service.Common;
 
 namespace Example.Service
 {
-    public class RandomSubclassService
+    public class RandomSubclassService : IRandomSubclassService
     {
-        public RandomSubclassService()
+        private IRandomSubclassRepository _repository;
+
+        public RandomSubclassService(IRandomSubclassRepository repository)
         {
-            repository = new RandomSubclassRepository();
+            _repository = repository;
         }
 
-        private RandomSubclassRepository repository;
 
         public async Task Init()
         {
-            await repository.InitializeDB();
+            await _repository.InitializeDB();
         }
 
-        public async Task<List<RandomSubclassModel>> GetAll()
+        public async Task<List<IRandomSubclassModel>> GetAll()
         {
-            List<RandomSubclassModel> list = await repository.GetAll();
+            List<IRandomSubclassModel> list = await _repository.GetAll();
             return list;
         }
 
-        public async Task<RandomSubclassModel> GetById(Guid id)
+        public async Task<IRandomSubclassModel> GetById(Guid id)
         {
-            RandomSubclassModel list = await repository.GetById(id);
+            IRandomSubclassModel list = await _repository.GetById(id);
             return list;
         }
 
-        public async Task PostRandomSubclass(RandomSubclassModel RandomSubclass)
+        public async Task PostRandomSubclass(IRandomSubclassModel randomSubclass)
         {
-            await repository.PostRandomSubclass(RandomSubclass);
+            await _repository.PostRandomSubclass(randomSubclass);
         }
 
-        public async Task PutRandomSubclass(Guid id, RandomSubclassModel RandomSubclass)
+        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
         {
-            await repository.PutRandomSubclass(id, RandomSubclass);
+            await _repository.PutRandomSubclass(id, randomSubclass);
         }
 
         public async Task DeleteRandomSubclass(Guid id)
         {
-            await repository.DeleteRandomSubclass(id);
+            await _repository.DeleteRandomSubclass(id);
         }
     }
 }

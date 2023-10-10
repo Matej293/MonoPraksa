@@ -2,50 +2,52 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Example.Service.Common;
-using Example.Repository;
 using Example.Model;
+using Example.Repository.Common;
+using Example.Model.Common;
 
 namespace Example.Service
 {
     public class CityService : ICityService
     {
-        public CityService() 
+        private ICityRepository _repository;
+
+        public CityService(ICityRepository repository) 
         {
-            repository = new CityRepository();
+            _repository = repository;
         }
 
-        private readonly CityRepository repository;
 
         public async Task Init()
         {
-            await repository.InitializeDB();
+            await _repository.InitializeDB();
         }
 
-        public async Task<List<CityModel>> GetAll()
+        public async Task<List<ICityModel>> GetAll()
         {
-            List<CityModel> cities = await repository.GetAll();
+            List<ICityModel> cities = await _repository.GetAll();
             return cities;
         }
 
-        public async Task<CityModel> GetById(Guid id)
+        public async Task<ICityModel> GetById(Guid id)
         {
-            CityModel cities = await repository.GetById(id);
+            ICityModel cities = await _repository.GetById(id);
             return cities;
         }
 
-        public async Task PostCity(CityModel city)
+        public async Task PostCity(ICityModel city)
         {
-            await repository.PostCity(city);
+            await _repository.PostCity(city);
         }
 
-        public async Task PutCity(Guid id, CityModel city)
+        public async Task PutCity(Guid id, ICityModel city)
         {
-            await repository.PutCity(id, city);
+            await _repository.PutCity(id, city);
         }
 
         public async Task DeleteCity(Guid id)
         {
-            await repository.DeleteCity(id);
+            await _repository.DeleteCity(id);
         }
     }
 }

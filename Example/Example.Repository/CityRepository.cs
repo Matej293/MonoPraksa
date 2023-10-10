@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 using System.Configuration;
 using Npgsql;
 using NpgsqlTypes;
-using Example.Repository.Common;
 using Example.Model;
-using Example.Common;
+using Example.Repository.Common;
+using Example.Model.Common;
 
 namespace Example.Repository
 {
@@ -57,9 +57,10 @@ namespace Example.Repository
             }
         }
 
-        public async Task<List<CityModel>> GetAll()
+        public async Task<List<ICityModel>> GetAll()
         {
-            List<CityModel> cities = new List<CityModel>();
+            List<ICityModel> cities = new List<ICityModel>();
+
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
                 connection.Open();
@@ -73,7 +74,7 @@ namespace Example.Repository
                     {
                         while (reader.Read())
                         {
-                            CityModel city = ReadCity(reader);
+                            ICityModel city = ReadCity(reader, includeEmbeds: true);
                             cities.Add(city);
                         }
                     }
@@ -83,7 +84,7 @@ namespace Example.Repository
         }
 
         //helper function
-        public CityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false)
+        public ICityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false)
         {
             Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
             string name = reader.GetString(reader.GetOrdinal("Name"));
@@ -91,7 +92,7 @@ namespace Example.Repository
             int population = reader.GetInt32(reader.GetOrdinal("Population"));
             Guid randomsubclassid = reader.GetGuid(reader.GetOrdinal("RandomSubclassId"));
 
-            RandomSubclassModel rand = null;
+            IRandomSubclassModel rand = null;
 
             if (includeEmbeds)
             {
@@ -107,20 +108,20 @@ namespace Example.Repository
                 };
             }
 
-            CityModel city = new CityModel
+            ICityModel city = new CityModel
             {
                 Id = id,
                 Name = name,
                 Country = country,
                 Population = population,
                 RandomSubclassId = randomsubclassid,
-                RandomSubclassModel = rand
+                RandomSubclass = rand
             };
 
             return city;
         }
 
-        public async Task<CityModel> GetById(Guid id, string embeds = null)
+        public async Task<ICityModel> GetById(Guid id, string embeds = null)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -159,7 +160,7 @@ namespace Example.Repository
             return null;
         }
 
-        public async Task<CityModel> PostCity(CityModel city)
+        public async Task<ICityModel> PostCity(ICityModel city)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -193,7 +194,7 @@ namespace Example.Repository
         }
 
 
-        public async Task PutCity(Guid id, CityModel city)
+        public async Task PutCity(Guid id, ICityModel city)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {

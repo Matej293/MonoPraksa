@@ -1,17 +1,17 @@
 ﻿using System;
-using Example.Model;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Example.Model.Common;
 
 namespace Example.Service.Common
 {
     public interface IRandomSubclassService
     {
         Task Init();
-        Task<List<RandomSubclassModel>> GetAll();
-        Task<RandomSubclassModel> GetById(Guid id);
-        Task PostCity(RandomSubclassModel city);
-        Task PutCity(Guid id, RandomSubclassModel city);
-        Task DeleteCity(Guid id);
+        Task<List<IRandomSubclassModel>> GetAll();
+        Task<IRandomSubclassModel> GetById(Guid id);
+        Task PostRandomSubclass(IRandomSubclassModel city);
+        Task PutRandomSubclass(Guid id, IRandomSubclassModel city);
+        Task DeleteRandomSubclass(Guid id);
     }
 }
