@@ -10,7 +10,7 @@ namespace Example.Service
 {
     public class CityService : ICityService
     {
-        private ICityRepository _repository;
+        private readonly ICityRepository _repository;
 
         public CityService(ICityRepository repository) 
         {
@@ -23,15 +23,15 @@ namespace Example.Service
             await _repository.InitializeDB();
         }
 
-        public async Task<List<ICityModel>> GetAll()
+        public async Task<List<CityModel>> GetAll()
         {
-            List<ICityModel> cities = await _repository.GetAll();
+            List<CityModel> cities = await _repository.GetAll();
             return cities;
         }
 
-        public async Task<ICityModel> GetById(Guid id)
+        public async Task<CityModel> GetById(Guid id)
         {
-            ICityModel cities = await _repository.GetById(id);
+            CityModel cities = await _repository.GetById(id);
             return cities;
         }
 

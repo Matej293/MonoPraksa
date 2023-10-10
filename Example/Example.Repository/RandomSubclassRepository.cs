@@ -57,9 +57,9 @@ namespace Example.Repository
             }
         }
 
-        public async Task<List<IRandomSubclassModel>> GetAll()
+        public async Task<List<Model.Common.RandomSubclassModel>> GetAll()
         {
-            List<IRandomSubclassModel> list = new List<IRandomSubclassModel>();
+            List<Model.Common.RandomSubclassModel> list = new List<Model.Common.RandomSubclassModel>();
 
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -67,13 +67,13 @@ namespace Example.Repository
 
                 string commandText = $"SELECT * FROM \"{TABLE_NAME_2}\"";
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+                using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
-                            IRandomSubclassModel randomSubclass = ReadFunc(reader);
+                            Model.Common.RandomSubclassModel randomSubclass = ReadFunc(reader);
                             list.Add(randomSubclass);
                         }
                     }
@@ -84,13 +84,13 @@ namespace Example.Repository
         }
 
         //helper function
-        public IRandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false)
+        public Model.Common.RandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false)
         {
-            Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
+            var id = reader.GetGuid(reader.GetOrdinal("Id"));
             string arg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
             int arg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
 
-            IRandomSubclassModel rand = new RandomSubclassModel
+            Model.Common.RandomSubclassModel rand = new Model.RandomSubclassModel
             {
                 Id = id,
                 RandomArg1 = arg1,
@@ -100,7 +100,7 @@ namespace Example.Repository
             return rand;
         }
 
-        public async Task<IRandomSubclassModel> GetById(Guid id)
+        public async Task<Model.Common.RandomSubclassModel> GetById(Guid id)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -126,7 +126,7 @@ namespace Example.Repository
 
 
 
-        public async Task<IRandomSubclassModel> PostRandomSubclass(IRandomSubclassModel randomSubclass)
+        public async Task<Model.Common.RandomSubclassModel> PostRandomSubclass(Model.Common.RandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -153,7 +153,7 @@ namespace Example.Repository
             }
         }
 
-        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
+        public async Task PutRandomSubclass(Guid id, Model.Common.RandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {

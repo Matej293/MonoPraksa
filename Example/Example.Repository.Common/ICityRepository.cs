@@ -10,9 +10,9 @@ namespace Example.Repository.Common
     public interface ICityRepository
     {
         Task InitializeDB();
-        Task<List<ICityModel>> GetAll();
-        Task<ICityModel> GetById(Guid id, string embeds = null);
-        ICityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false);
+        Task<List<CityModel>> GetAll();
+        Task<CityModel> GetById(Guid id, string embeds = null);
+        CityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false);
         Task<ICityModel> PostCity(ICityModel city);
         Task PutCity(Guid id, ICityModel city);
         Task DeleteCity(Guid id);

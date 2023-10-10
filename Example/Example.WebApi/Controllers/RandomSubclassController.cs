@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
+using Example.Model;
 using Example.Model.Common;
 using Example.Service.Common;
 
@@ -11,7 +12,7 @@ namespace Example.WebApi.Controllers
 {
     public class RandomSubclassController : ApiController
     {
-        private IRandomSubclassService _service;
+        private readonly IRandomSubclassService _service;
 
         public RandomSubclassController(IRandomSubclassService service)
         {
@@ -20,7 +21,7 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetAll()
         {
-            List<IRandomSubclassModel> list = await _service.GetAll();
+            List<Model.Common.RandomSubclassModel> list = await _service.GetAll();
             if (list == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -30,35 +31,43 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetById(Guid id)
         {
-            IRandomSubclassModel RandomSubclass = await _service.GetById(id);
-            if (RandomSubclass == null)
+            Model.Common.RandomSubclassModel randomSubclass = await _service.GetById(id);
+            if (randomSubclass == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, id);
             }
-            return Request.CreateResponse(HttpStatusCode.OK, RandomSubclass);
+            return Request.CreateResponse(HttpStatusCode.OK, randomSubclass);
         }
 
-        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] IRandomSubclassModel RandomSubclass)
+        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] Model.RandomSubclassModel randomSubclass)
         {
-            if (RandomSubclass == null)
+            if (randomSubclass == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
 
-            await _service.Init(); // initializing the tables with create if not exists
-
-            await _service.PostRandomSubclass(RandomSubclass);
+            await _service.PostRandomSubclass(randomSubclass);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, IRandomSubclassModel RandomSubclass)
+        [Route("api/randomsubclass/init")]
+        public async Task<HttpResponseMessage> PostRandomSubclass()
         {
-            if (RandomSubclass == null)
+            await _service.Init(); // initializing the tables with create if not exists
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, Model.RandomSubclassModel randomSubclass)
+        {
+            if (randomSubclass == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
-            await _service.PutRandomSubclass(id, RandomSubclass);
+
+            await _service.PutRandomSubclass(id, randomSubclass);
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 

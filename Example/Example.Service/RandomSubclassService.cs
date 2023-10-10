@@ -10,37 +10,36 @@ namespace Example.Service
 {
     public class RandomSubclassService : IRandomSubclassService
     {
-        private IRandomSubclassRepository _repository;
+        private readonly IRandomSubclassRepository _repository;
 
         public RandomSubclassService(IRandomSubclassRepository repository)
         {
             _repository = repository;
         }
 
-
         public async Task Init()
         {
             await _repository.InitializeDB();
         }
 
-        public async Task<List<IRandomSubclassModel>> GetAll()
+        public async Task<List<Model.Common.RandomSubclassModel>> GetAll()
         {
-            List<IRandomSubclassModel> list = await _repository.GetAll();
+            List<Model.Common.RandomSubclassModel> list = await _repository.GetAll();
             return list;
         }
 
-        public async Task<IRandomSubclassModel> GetById(Guid id)
+        public async Task<Model.Common.RandomSubclassModel> GetById(Guid id)
         {
-            IRandomSubclassModel list = await _repository.GetById(id);
+            Model.Common.RandomSubclassModel list = await _repository.GetById(id);
             return list;
         }
 
-        public async Task PostRandomSubclass(IRandomSubclassModel randomSubclass)
+        public async Task PostRandomSubclass(Model.Common.RandomSubclassModel randomSubclass)
         {
             await _repository.PostRandomSubclass(randomSubclass);
         }
 
-        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
+        public async Task PutRandomSubclass(Guid id, Model.Common.RandomSubclassModel randomSubclass)
         {
             await _repository.PutRandomSubclass(id, randomSubclass);
         }

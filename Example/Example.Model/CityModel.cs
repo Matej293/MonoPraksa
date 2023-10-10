@@ -13,6 +13,6 @@ namespace Example.Model
         public string Country { get; set;} 
         public int Population { get; set; }
         public Guid RandomSubclassId { get; set; }
-        public IRandomSubclassModel RandomSubclass { get; set; }
+        public RandomSubclassModel RandomSubclass { get; set; }
     }
 }

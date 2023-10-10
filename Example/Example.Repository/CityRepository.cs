@@ -5,7 +5,7 @@ using System.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using Example.Model;
-using Example.Repository.Common;
+using Example.Repository.Common
 using Example.Model.Common;
 
 namespace Example.Repository
@@ -57,9 +57,9 @@ namespace Example.Repository
             }
         }
 
-        public async Task<List<ICityModel>> GetAll()
+        public async Task<List<CityModel>> GetAll()
         {
-            List<ICityModel> cities = new List<ICityModel>();
+            List<CityModel> cities = new List<CityModel>();
 
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -67,14 +67,13 @@ namespace Example.Repository
 
                 string commandText = $"SELECT * FROM \"{TABLE_NAME}\"";
 
-                using (NpgsqlCommand cmd = new NpgsqlCommand(commandText, connection))
+                using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
-                        while (reader.Read())
+                        while (await reader.ReadAsync())
                         {
-                            ICityModel city = ReadCity(reader, includeEmbeds: true);
+                            CityModel city = ReadCity(reader, includeEmbeds: true);
                             cities.Add(city);
                         }
                     }
@@ -84,7 +83,7 @@ namespace Example.Repository
         }
 
         //helper function
-        public ICityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false)
+        public CityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false)
         {
             Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
             string name = reader.GetString(reader.GetOrdinal("Name"));
@@ -92,23 +91,16 @@ namespace Example.Repository
             int population = reader.GetInt32(reader.GetOrdinal("Population"));
             Guid randomsubclassid = reader.GetGuid(reader.GetOrdinal("RandomSubclassId"));
 
-            IRandomSubclassModel rand = null;
+            RandomSubclassModel rand = new RandomSubclassModel();
 
             if (includeEmbeds)
             {
-                Guid id_2 = reader.GetGuid(reader.GetOrdinal("RandomSubclassId"));
-                string arg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
-                int arg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
-
-                rand = new RandomSubclassModel
-                {
-                    Id = id_2,
-                    RandomArg1 = arg1,
-                    RandomArg2 = arg2
-                };
+                rand.Id = randomsubclassid;
+                rand.RandomArg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
+                rand.RandomArg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
             }
 
-            ICityModel city = new CityModel
+            CityModel city = new CityModel
             {
                 Id = id,
                 Name = name,
@@ -121,7 +113,7 @@ namespace Example.Repository
             return city;
         }
 
-        public async Task<ICityModel> GetById(Guid id, string embeds = null)
+        public async Task<CityModel> GetById(Guid id, string embeds = null)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {

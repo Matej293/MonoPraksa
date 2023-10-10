@@ -8,17 +8,18 @@ using Example.Repository;
 using Example.Repository.Common;
 using Example.Service;
 using Example.Service.Common;
+using Example.WebApi.Controllers;
 
 namespace Example.WebApi.App_Start
 {
     public static class AutofacConfig
     {
-        public static void ConfigureContainer()
+        public static IContainer ConfigureContainer()
         {
             var builder = new ContainerBuilder();
 
-            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-
+            builder.RegisterType<CityController>();
+            builder.RegisterType<RandomSubclassController>();
 
             builder.RegisterType<CityService>().As<ICityService>();
             builder.RegisterType<RandomSubclassService>().As<IRandomSubclassService>();
@@ -27,12 +28,11 @@ namespace Example.WebApi.App_Start
             builder.RegisterType<RandomSubclassRepository>().As<IRandomSubclassRepository>();
 
             builder.RegisterType<CityModel>().As<ICityModel>();
-            builder.RegisterType<RandomSubclassModel>().As<IRandomSubclassModel>();
-
+            builder.RegisterType<RandomSubclassModel>().As<RandomSubclassModel>();
 
             var container = builder.Build();
 
-            GlobalConfiguration.Configuration.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+            return container;            
         }
     }
 }
