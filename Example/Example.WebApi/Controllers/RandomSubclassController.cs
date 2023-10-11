@@ -21,7 +21,7 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetAll()
         {
-            List<Model.Common.RandomSubclassModel> list = await _service.GetAll();
+            List<RandomSubclassModel> list = await _service.GetAll();
             if (list == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
@@ -31,7 +31,7 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetById(Guid id)
         {
-            Model.Common.RandomSubclassModel randomSubclass = await _service.GetById(id);
+            RandomSubclassModel randomSubclass = await _service.GetById(id);
             if (randomSubclass == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, id);
@@ -39,17 +39,6 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK, randomSubclass);
         }
 
-        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] Model.RandomSubclassModel randomSubclass)
-        {
-            if (randomSubclass == null)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            }
-
-            await _service.PostRandomSubclass(randomSubclass);
-
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
 
         [Route("api/randomsubclass/init")]
         public async Task<HttpResponseMessage> PostRandomSubclass()
@@ -59,9 +48,22 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, Model.RandomSubclassModel randomSubclass)
+        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] RandomSubclassModel randomSubclass)
         {
             if (randomSubclass == null)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
+            }
+
+            await _service.PostRandomSubclass(randomSubclass);
+
+            return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+
+        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, Model.RandomSubclassModel randomSubclass)
+        {
+            if (randomSubclass == null | _service.GetById(id) == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }

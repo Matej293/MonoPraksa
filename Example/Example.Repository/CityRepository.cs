@@ -5,7 +5,7 @@ using System.Configuration;
 using Npgsql;
 using NpgsqlTypes;
 using Example.Model;
-using Example.Repository.Common
+using Example.Repository.Common;
 using Example.Model.Common;
 
 namespace Example.Repository
@@ -19,10 +19,7 @@ namespace Example.Repository
         private const string TABLE_NAME = "City";
         private const string TABLE_NAME_2 = "RandomSubclass";
 
-        public CityRepository()
-        {
-             connection = new NpgsqlConnection(CONNECTION_STRING);
-        }
+        public CityRepository() { }
 
         public async Task InitializeDB()
         {
@@ -73,7 +70,7 @@ namespace Example.Repository
                     {
                         while (await reader.ReadAsync())
                         {
-                            CityModel city = ReadCity(reader, includeEmbeds: true);
+                            CityModel city = ReadCity(reader);
                             cities.Add(city);
                         }
                     }
@@ -83,7 +80,7 @@ namespace Example.Repository
         }
 
         //helper function
-        public CityModel ReadCity(NpgsqlDataReader reader, bool includeEmbeds = false)
+        public CityModel ReadCity(NpgsqlDataReader reader)
         {
             Guid id = reader.GetGuid(reader.GetOrdinal("Id"));
             string name = reader.GetString(reader.GetOrdinal("Name"));
@@ -93,12 +90,10 @@ namespace Example.Repository
 
             RandomSubclassModel rand = new RandomSubclassModel();
 
-            if (includeEmbeds)
-            {
-                rand.Id = randomsubclassid;
-                rand.RandomArg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
-                rand.RandomArg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
-            }
+            rand.Id = randomsubclassid;
+            rand.RandomArg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
+            rand.RandomArg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
+
 
             CityModel city = new CityModel
             {
@@ -143,7 +138,7 @@ namespace Example.Repository
                     {
                         if (await reader.ReadAsync())
                         {
-                            return ReadCity(reader, !string.IsNullOrWhiteSpace(embeds));
+                            return ReadCity(reader);
                         }
                     }
                 }

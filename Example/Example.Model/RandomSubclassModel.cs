@@ -6,7 +6,7 @@ using Example.Model.Common;
 
 namespace Example.Model
 {
-    public class RandomSubclassModel : Common.RandomSubclassModel
+    public class RandomSubclassModel : IRandomSubclassModel
     {
         public Guid Id { get; set; }
         public string RandomArg1 { get; set; }

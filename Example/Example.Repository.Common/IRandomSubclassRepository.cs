@@ -10,11 +10,11 @@ namespace Example.Repository.Common
     public interface IRandomSubclassRepository
     {
         Task InitializeDB();
-        Task<List<Model.Common.RandomSubclassModel>> GetAll();
-        Task<Model.Common.RandomSubclassModel> GetById(Guid id);
-        Model.Common.RandomSubclassModel ReadFunc(NpgsqlDataReader reader, bool includeEmbeds = false);
-        Task<Model.Common.RandomSubclassModel> PostRandomSubclass(Model.Common.RandomSubclassModel randomSubclass);
-        Task PutRandomSubclass(Guid id, Model.Common.RandomSubclassModel randomSubclass);
+        Task<List<RandomSubclassModel>> GetAll();
+        Task<RandomSubclassModel> GetById(Guid id);
+        RandomSubclassModel ReadFunc(NpgsqlDataReader reader);
+        Task<RandomSubclassModel> PostRandomSubclass(RandomSubclassModel randomSubclass);
+        Task PutRandomSubclass(Guid id, RandomSubclassModel randomSubclass);
         Task DeleteRandomSubclass(Guid id);
     }
 }

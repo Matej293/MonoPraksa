@@ -54,7 +54,7 @@ namespace Example.WebApi.Controllers
         {
             if(city == null)
             {
-                return Request.CreateResponse(HttpStatusCode.NotFound);
+                return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
             await _service.PostCity(city);
@@ -64,7 +64,7 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> PutCity(Guid id, CityModel city)
         {
-            if (city == null)
+            if (city == null | _service.GetById(id) == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }

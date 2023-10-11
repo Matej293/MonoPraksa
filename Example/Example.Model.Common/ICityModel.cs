@@ -14,6 +14,6 @@ namespace Example.Model.Common
         string Country { get; set; }
         int Population { get; set; }
         Guid RandomSubclassId { get; set; }
-        RandomSubclassModel RandomSubclass { get; set; }
+        IRandomSubclassModel RandomSubclass { get; set; }
     }
 }

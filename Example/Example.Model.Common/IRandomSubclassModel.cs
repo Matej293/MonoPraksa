@@ -7,7 +7,7 @@ using Example.Model;
 
 namespace Example.Model.Common
 {
-    public interface RandomSubclassModel
+    public interface IRandomSubclassModel
     {
         Guid Id { get; set; }
         string RandomArg1 { get; set; }
