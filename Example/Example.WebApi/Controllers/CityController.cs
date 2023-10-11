@@ -21,7 +21,7 @@ namespace Example.WebApi.Controllers
         
         public async Task<HttpResponseMessage> GetCities()
         {
-            List<CityModel> cities = await _service.GetAll();
+            List<ICityModel> cities = await _service.GetAll();
 
             if (cities == null)
             { 
@@ -33,12 +33,13 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetById(Guid id)
         {
-            CityModel city = await _service.GetById(id);
+            ICityModel city = await _service.GetById(id);
 
             if (city == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, id);
             }
+
             return Request.CreateResponse(HttpStatusCode.OK, city);
         }
 

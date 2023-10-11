@@ -22,24 +22,24 @@ namespace Example.Service
             await _repository.InitializeDB();
         }
 
-        public async Task<List<Model.Common.RandomSubclassModel>> GetAll()
+        public async Task<List<IRandomSubclassModel>> GetAll()
         {
-            List<Model.Common.RandomSubclassModel> list = await _repository.GetAll();
+            List<IRandomSubclassModel> list = await _repository.GetAll();
             return list;
         }
 
-        public async Task<Model.Common.RandomSubclassModel> GetById(Guid id)
+        public async Task<IRandomSubclassModel> GetById(Guid id)
         {
-            Model.Common.RandomSubclassModel list = await _repository.GetById(id);
-            return list;
+            IRandomSubclassModel randomSubclass = await _repository.GetById(id);
+            return randomSubclass;
         }
 
-        public async Task PostRandomSubclass(Model.Common.RandomSubclassModel randomSubclass)
+        public async Task PostRandomSubclass(IRandomSubclassModel randomSubclass)
         {
             await _repository.PostRandomSubclass(randomSubclass);
         }
 
-        public async Task PutRandomSubclass(Guid id, Model.Common.RandomSubclassModel randomSubclass)
+        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
         {
             await _repository.PutRandomSubclass(id, randomSubclass);
         }

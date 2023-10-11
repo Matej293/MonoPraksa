@@ -21,21 +21,24 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> GetAll()
         {
-            List<RandomSubclassModel> list = await _service.GetAll();
+            List<IRandomSubclassModel> list = await _service.GetAll();
             if (list == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
+
             return Request.CreateResponse(HttpStatusCode.OK, list);
         }
 
         public async Task<HttpResponseMessage> GetById(Guid id)
         {
-            RandomSubclassModel randomSubclass = await _service.GetById(id);
+            IRandomSubclassModel randomSubclass = await _service.GetById(id);
+
             if (randomSubclass == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound, id);
             }
+
             return Request.CreateResponse(HttpStatusCode.OK, randomSubclass);
         }
 
@@ -61,7 +64,7 @@ namespace Example.WebApi.Controllers
         }
 
 
-        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, Model.RandomSubclassModel randomSubclass)
+        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, RandomSubclassModel randomSubclass)
         {
             if (randomSubclass == null | _service.GetById(id) == null)
             {
@@ -75,11 +78,13 @@ namespace Example.WebApi.Controllers
 
         public async Task<HttpResponseMessage> DeleteRandomSubclass(Guid id)
         {
-            if (_service.GetById(id).Id == 0)
+            if (_service.GetById(id).Id == 0 | _service.GetById(id) == null)
             {
                 return Request.CreateResponse(HttpStatusCode.NotFound);
             }
+
             await _service.DeleteRandomSubclass(id);
+
             return Request.CreateResponse(HttpStatusCode.OK);
         }
     }

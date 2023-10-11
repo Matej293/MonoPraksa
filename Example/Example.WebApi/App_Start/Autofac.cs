@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 using System.Web.Http;
 using Autofac;
 using Autofac.Integration.WebApi;
@@ -14,7 +15,7 @@ namespace Example.WebApi.App_Start
 {
     public static class AutofacConfig
     {
-        public static IContainer ConfigureContainer()
+        public static Autofac.IContainer ConfigureContainer()
         {
             var builder = new ContainerBuilder();
 

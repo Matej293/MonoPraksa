@@ -14,8 +14,6 @@ namespace Example.Repository
     {
         private readonly string CONNECTION_STRING = ConfigurationManager.ConnectionStrings["CONNECTION_STRING"].ConnectionString;
 
-        private readonly NpgsqlConnection connection;
-
         private const string TABLE_NAME = "City";
         private const string TABLE_NAME_2 = "RandomSubclass";
 
@@ -29,12 +27,12 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(CONNECTION_STRING, connection))
                 {
-                    cmd.CommandText = $"CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";";
+                    cmd.CommandText = $"CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";";
                     await cmd.ExecuteNonQueryAsync();
 
 
                     cmd.CommandText = $"CREATE TABLE IF NOT EXISTS \"{TABLE_NAME_2}\" (" +
-                                      $"\"Id\" UUID DEFAULT uuid_generate_v4() PRIMARY KEY, " +
+                                      $"\"Id\" UUID DEFAULT gen_random_uuid() PRIMARY KEY, " +
                                       $"\"RandomArg1\" VARCHAR NOT NULL, " +
                                       $"\"RandomArg2\" INTEGER NOT NULL" +
                                       $")";
@@ -42,7 +40,7 @@ namespace Example.Repository
 
 
                     cmd.CommandText = $"CREATE TABLE IF NOT EXISTS \"{TABLE_NAME}\" (" +
-                                      $"\"Id\" UUID DEFAULT uuid_generate_v4() PRIMARY KEY, " +
+                                      $"\"Id\" UUID DEFAULT gen_random_uuid() PRIMARY KEY, " +
                                       $"\"Name\" VARCHAR NOT NULL, " +
                                       $"\"Country\" VARCHAR NOT NULL, " +
                                       $"\"Population\" INTEGER NOT NULL, " +
@@ -54,9 +52,9 @@ namespace Example.Repository
             }
         }
 
-        public async Task<List<RandomSubclassModel>> GetAll()
+        public async Task<List<IRandomSubclassModel>> GetAll()
         {
-            List<RandomSubclassModel> list = new List<RandomSubclassModel>();
+            List<IRandomSubclassModel> list = new List<IRandomSubclassModel>();
 
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -70,24 +68,23 @@ namespace Example.Repository
                     {
                         while (await reader.ReadAsync())
                         {
-                            RandomSubclassModel randomSubclass = ReadFunc(reader);
+                            IRandomSubclassModel randomSubclass = ReadFunc(reader);
                             list.Add(randomSubclass);
                         }
                     }
                 }
             }
-            connection.Close();
             return list;
         }
 
         //helper function
-        public RandomSubclassModel ReadFunc(NpgsqlDataReader reader)
+        private IRandomSubclassModel ReadFunc(NpgsqlDataReader reader)
         {
             var id = reader.GetGuid(reader.GetOrdinal("Id"));
             string arg1 = reader.GetString(reader.GetOrdinal("RandomArg1"));
             int arg2 = reader.GetInt32(reader.GetOrdinal("RandomArg2"));
 
-            RandomSubclassModel rand = new Model.RandomSubclassModel
+            RandomSubclassModel rand = new RandomSubclassModel
             {
                 Id = id,
                 RandomArg1 = arg1,
@@ -97,7 +94,7 @@ namespace Example.Repository
             return rand;
         }
 
-        public async Task<RandomSubclassModel> GetById(Guid id)
+        public async Task<IRandomSubclassModel> GetById(Guid id)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -122,8 +119,7 @@ namespace Example.Repository
         }
 
 
-
-        public async Task<RandomSubclassModel> PostRandomSubclass(RandomSubclassModel randomSubclass)
+        public async Task<IRandomSubclassModel> PostRandomSubclass(IRandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {
@@ -137,7 +133,7 @@ namespace Example.Repository
                     {
                         ParameterName = "@Id",
                         NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = randomSubclass.Id
+                        Value = Guid.NewGuid()
                     });
 
                     cmd.Parameters.AddWithValue("@RandomArg1", randomSubclass.RandomArg1);
@@ -150,7 +146,7 @@ namespace Example.Repository
             }
         }
 
-        public async Task PutRandomSubclass(Guid id, RandomSubclassModel randomSubclass)
+        public async Task PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
         {
             using (var connection = new NpgsqlConnection(CONNECTION_STRING))
             {

@@ -23,15 +23,15 @@ namespace Example.Service
             await _repository.InitializeDB();
         }
 
-        public async Task<List<CityModel>> GetAll()
+        public async Task<List<ICityModel>> GetAll()
         {
-            List<CityModel> cities = await _repository.GetAll();
+            List<ICityModel> cities = await _repository.GetAll();
             return cities;
         }
 
-        public async Task<CityModel> GetById(Guid id)
+        public async Task<ICityModel> GetById(Guid id)
         {
-            CityModel cities = await _repository.GetById(id);
+            ICityModel cities = await _repository.GetById(id);
             return cities;
         }
 
