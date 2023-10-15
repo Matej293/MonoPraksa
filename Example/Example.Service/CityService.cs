@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Example.Service.Common;
-using Example.Model;
 using Example.Repository.Common;
 using Example.Model.Common;
 

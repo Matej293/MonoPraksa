@@ -115,12 +115,8 @@ namespace Example.Repository
                 using (var cmd = new NpgsqlCommand())
                 {
                     cmd.Connection = connection;
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = id
-                    });
+
+                    cmd.Parameters.AddWithValue("@Id", id);
 
                     var select = $"SELECT * FROM \"{TABLE_NAME}\" c ";
 
@@ -151,21 +147,11 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = Guid.NewGuid()
-                    });
+                    cmd.Parameters.AddWithValue("@Id", Guid.NewGuid());
                     cmd.Parameters.AddWithValue("@Name", city.Name);
                     cmd.Parameters.AddWithValue("@Country", city.Country);
                     cmd.Parameters.AddWithValue("@Population", city.Population);
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@RandomSubclassId",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = city.RandomSubclassId
-                    });
+                    cmd.Parameters.AddWithValue("@RandomSubclassId", city.RandomSubclassId);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -186,21 +172,11 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = city.Id
-                    });
+                    cmd.Parameters.AddWithValue("@Id", city.Id);
                     cmd.Parameters.AddWithValue("@Name", city.Name);
                     cmd.Parameters.AddWithValue("@Country", city.Country);
                     cmd.Parameters.AddWithValue("@Population", city.Population);
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@RandomSubclassId",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = city.RandomSubclassId
-                    });
+                    cmd.Parameters.AddWithValue("@RandomSubclassId", city.RandomSubclassId);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -218,12 +194,8 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = id
-                    });
+                    cmd.Parameters.AddWithValue("@Id", id);
+
                     await cmd.ExecuteNonQueryAsync();
                 }
             }

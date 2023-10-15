@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web.Configuration;
 using System.Web.Http;
 using Example.Model;
 using Example.Model.Common;
 using Example.Service.Common;
+using Example.WebApi.Models;
 
 namespace Example.WebApi.Controllers
 {
@@ -51,20 +53,22 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] RandomSubclassModel randomSubclass)
+        public async Task<HttpResponseMessage> PostRandomSubclass([FromBody] RandomSubclassCreateRest rsRest)
         {
-            if (randomSubclass == null)
+            if (rsRest == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
 
-            await _service.PostRandomSubclass(randomSubclass);
+            RandomSubclassModel rand = RSMapping(rsRest);
+
+            await _service.PostRandomSubclass(rand);
 
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
 
-        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, RandomSubclassModel randomSubclass)
+        public async Task<HttpResponseMessage> PutRandomSubclass(Guid id, IRandomSubclassModel randomSubclass)
         {
             if (randomSubclass == null | _service.GetById(id) == null)
             {
@@ -86,6 +90,18 @@ namespace Example.WebApi.Controllers
             await _service.DeleteRandomSubclass(id);
 
             return Request.CreateResponse(HttpStatusCode.OK);
+        }
+
+        private RandomSubclassModel RSMapping(RandomSubclassCreateRest rsRest)
+        {
+            RandomSubclassModel rand = new RandomSubclassModel
+            {
+                Id = Guid.NewGuid(),
+                RandomArg1 = rsRest.RandomArg1,
+                RandomArg2 = rsRest.RandomArg2
+            };
+
+            return rand;
         }
     }
 }

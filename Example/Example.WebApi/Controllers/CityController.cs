@@ -7,6 +7,7 @@ using System.Web.Http;
 using Example.Model;
 using Example.Model.Common;
 using Example.Service.Common;
+using Example.WebApi.Models;
 
 namespace Example.WebApi.Controllers
 {
@@ -51,12 +52,14 @@ namespace Example.WebApi.Controllers
             return Request.CreateResponse(HttpStatusCode.OK);
         }
 
-        public async Task<HttpResponseMessage> PostCity([FromBody]CityModel city)
+        public async Task<HttpResponseMessage> PostCity([FromBody]CityCreateRest cityRest)
         {
-            if(city == null)
+            if(cityRest == null)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest);
             }
+
+            CityModel city = CityMapping(cityRest);
 
             await _service.PostCity(city);
 
@@ -84,6 +87,22 @@ namespace Example.WebApi.Controllers
             await _service.DeleteCity(id);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
+
+        private CityModel CityMapping(CityCreateRest cityRest)
+        {
+            CityModel city = new CityModel
+            {
+                Id = Guid.NewGuid(),
+                Name = cityRest.Name,
+                Country = cityRest.Country,
+                Population = cityRest.Population,
+                RandomSubclassId = cityRest.RandomSubclassId,
+                RandomSubclass = cityRest.RandomSubclass
+            };
+
+            return city;
+        }
+
 
     }
 }

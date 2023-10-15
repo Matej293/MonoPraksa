@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Npgsql;
-using Example.Model;
 using Example.Model.Common;
 
 namespace Example.Repository.Common

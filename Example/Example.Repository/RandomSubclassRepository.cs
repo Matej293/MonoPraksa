@@ -129,13 +129,7 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = Guid.NewGuid()
-                    });
-
+                    cmd.Parameters.AddWithValue("@Id", Guid.NewGuid());
                     cmd.Parameters.AddWithValue("@RandomArg1", randomSubclass.RandomArg1);
                     cmd.Parameters.AddWithValue("@RandomArg2", randomSubclass.RandomArg2);
 
@@ -157,12 +151,7 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = randomSubclass.Id
-                    });
+                    cmd.Parameters.AddWithValue("@Id", randomSubclass.Id);
                     cmd.Parameters.AddWithValue("@RandomArg1", randomSubclass.RandomArg1);
                     cmd.Parameters.AddWithValue("@RandomArg2", randomSubclass.RandomArg2);
 
@@ -181,12 +170,7 @@ namespace Example.Repository
 
                 using (var cmd = new NpgsqlCommand(commandText, connection))
                 {
-                    cmd.Parameters.Add(new NpgsqlParameter
-                    {
-                        ParameterName = "@Id",
-                        NpgsqlDbType = NpgsqlDbType.Uuid,
-                        Value = id
-                    });
+                    cmd.Parameters.AddWithValue("@Id", id);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
