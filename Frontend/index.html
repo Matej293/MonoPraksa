@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>City</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="functions.js"></script>
+</head>
+<body>
+    <div class="banner">
+        <div class="cityCreation">
+            <h1>Create a city:</h1>
+            <br />
+            <form id="cityCreation">
+                <label for="nameIn">Name:</label>
+                <input type="text" id="nameIn" required><br>
+
+                <label for="countryIn">Country:</label>
+                <input type="text" id="countryIn" required><br>
+
+                <label for="populationIn">Population:</label>
+                <input type="number" id="populationIn" required><br><br>
+
+                <button id="createButton" type="button" onclick="createCityFromForm()"><span></span>Create City</button>
+            </form>
+
+        </div>
+        <div class="content">
+            <h2>CITY LIST:</h2>
+            <div id="cityObjects"></div>
+            <div id="buttonContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener("load", function () {
+            displayCities();
+        });
+    </script>
+</body>
+</html>
