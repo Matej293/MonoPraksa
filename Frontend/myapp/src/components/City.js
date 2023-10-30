@@ -3,26 +3,24 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-export const City = ({ cities, deleteCity, editCity }) => {
+export const City = ({ city, deleteCity, changeEditState }) => {
   return (
     <div className="City">
       <ul>
-        {cities.map((city) => (
-          <li key={city.id}>
-            City Name: {city.cityName}, Country: {city.country}, Population:{" "}
-            {city.population} <p></p>
-            <FontAwesomeIcon
-              className="edit-icon"
-              icon={faPenToSquare}
-              onClick={() => editCity(city)}
-            />
-            <FontAwesomeIcon
-              className="delete-icon"
-              icon={faTrash}
-              onClick={() => deleteCity(city.id)}
-            />
-          </li>
-        ))}
+        <li key={city.id}>
+          City Name: {city.cityName}, Country: {city.country}, Population:{" "}
+          {city.population} <p></p>
+          <FontAwesomeIcon
+            className="edit-icon"
+            icon={faPenToSquare}
+            onClick={() => changeEditState()}
+          />
+          <FontAwesomeIcon
+            className="delete-icon"
+            icon={faTrash}
+            onClick={() => deleteCity(city.id)}
+          />
+        </li>
       </ul>
     </div>
   );

@@ -6,11 +6,11 @@ import EditCityForm from "./EditCityForm";
 
 export const CityWrapper = () => {
   const [cities, setCities] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+
   const addCity = (city) => {
-    setCities((cities) => [
-      ...cities,
-      { id: uuidv4(), ...city, completed: false, isEditing: false },
-    ]);
+    setCities((cities) => [...cities, { id: uuidv4(), ...city }]);
+    setIsEditing(false);
     console.log(cities);
   };
 
@@ -25,6 +25,9 @@ export const CityWrapper = () => {
       )
     );
   };
+  const changeEditState = () => {
+    setIsEditing(true);
+  };
   return (
     <div className="CityWrapper">
       <h1>Add a new city!</h1>
@@ -34,14 +37,14 @@ export const CityWrapper = () => {
         <div>No cities added yet.</div>
       ) : (
         cities.map((city) =>
-          city.isEditing === city.id ? (
+          city.isEditing ? (
             <EditCityForm key={city.id} city={city} editCity={editCity} />
           ) : (
             <City
               key={city.id}
               city={city}
               deleteCity={deleteCity}
-              editCity={() => editCity(city.id)}
+              changeEditState={changeEditState}
             />
           )
         )
